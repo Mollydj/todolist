@@ -4,8 +4,8 @@ import "./App.css";
 function App() {
   const [newItem, setNewItem] = useState({});
   const [todo, setToDo] = useState([]);
-  const [removedToDo, setRemovedToDo] = useState([]);
   const [todos, setToDos] = useState([]);
+  const [removedToDo, setRemovedToDo] = useState([]);
 
   const STATUS_NUMBERS = {
     NOT_STARTED: 1,
@@ -14,15 +14,11 @@ function App() {
   };
 
   useEffect(() => {
-    const storedToDos = JSON.parse(localStorage.getItem("TODOS"));
-    // setToDos(storedToDos.length > 0 ? storedToDos.reverse() : null);
-    console.log(todo, todos.length, storedToDos);
-    if (todos.length > 0 && todo) {
-      setToDos(storedToDos.reverse());
+    const storedToDos = [JSON.parse(localStorage.getItem("TODOS"))];
+    if (storedToDos[0].length > 0) {
+      setToDos(storedToDos[0].reverse());
     }
-
-    console.log("todos");
-  }, [todo, removedToDo]);
+  }, [todo]);
 
   const handleInput = (event) => {
     setNewItem({
@@ -33,15 +29,16 @@ function App() {
   };
 
   const handleAddToDo = () => {
-    if (todos?.length > 0) {
-      let array = [...todos];
+    let array = [...todos];
+    if (todos) {
       array.push(newItem);
-      setToDo(array);
+      setToDos(array);
       localStorage.setItem("TODOS", JSON.stringify(array));
     } else {
-      setToDo([newItem]);
+      setToDos(newItem);
       localStorage.setItem("TODOS", JSON.stringify([newItem]));
     }
+    setToDo(newItem);
   };
 
   const handleRemoveToDo = (id) => {
@@ -52,7 +49,9 @@ function App() {
     }
     setRemovedToDo(index);
     setToDos(array);
-    localStorage.setItem("TODOS", JSON.stringify([array]));
+    setNewItem();
+    // localStorage.setItem("TODOS", JSON.stringify(array));
+    console.log("ARRAY", array);
   };
 
   const handleStatusChange = (event) => {
@@ -73,7 +72,7 @@ function App() {
         </button>
       </div>
 
-      {todos.length > 0 ? (
+      {todos?.length > 0 ? (
         todos.map((item) => (
           <div className="Card" key={item.id}>
             <p>{item.todo}</p>
@@ -83,9 +82,9 @@ function App() {
               <option>Complete</option>
             </select>
             <button onClick={() => handleRemoveToDo(item.id)}>Delete</button>
-            {/* <button onClick={() => handleRemoveToDo(item.id)}>
+            <button onClick={() => handleRemoveToDo(item.id)}>
               Add Subitem
-            </button> */}
+            </button>
           </div>
         ))
       ) : (
