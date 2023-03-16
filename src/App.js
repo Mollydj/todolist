@@ -15,8 +15,8 @@ function App() {
 
   useEffect(() => {
     const storedToDos = [JSON.parse(localStorage.getItem("TODOS"))];
-    if (storedToDos[0].length > 0) {
-      setToDos(storedToDos[0].reverse());
+    if (storedToDos[0]?.length > 0) {
+      setToDos(storedToDos[0]);
     }
   }, [todo]);
 
@@ -31,7 +31,7 @@ function App() {
   const handleAddToDo = () => {
     let array = [...todos];
     if (todos) {
-      array.push(newItem);
+      array.unshift(newItem);
       setToDos(array);
       localStorage.setItem("TODOS", JSON.stringify(array));
     } else {
@@ -42,24 +42,22 @@ function App() {
   };
 
   const handleRemoveToDo = (id) => {
-    const array = [...todos];
-    const index = array.map((item) => item.id === id).indexOf(true);
-    if (index > -1) {
-      array.splice(index, 1);
-    }
-    setRemovedToDo(index);
+    const copy = [...todos];
+    const array = copy.filter((item) => item.id !== id);
     setToDos(array);
-    setNewItem();
-    // localStorage.setItem("TODOS", JSON.stringify(array));
-    console.log("ARRAY", array);
+    localStorage.setItem("TODOS", JSON.stringify(array));
   };
 
-  const handleStatusChange = (event) => {
-    // const array = [...todos];
-    // const index = array.map((item) => item.id === id);
-    // console.log(event.target.value);
-    // let objectName;
-    // objectName = {status: , ...objectName};
+  const handleStatusChange = (event, item) => {
+    console.log("EVENT", event.target.value);
+    var index = todos.indexOf(item);
+    const updatedItem = {
+      ...newItem,
+      status: JSON.parse(event.target.value),
+    };
+    if (~index) {
+      todos[index] = updatedItem;
+    }
   };
 
   return (
@@ -74,12 +72,12 @@ function App() {
 
       {todos?.length > 0 ? (
         todos.map((item) => (
-          <div className="Card" key={item.id}>
+          <div className="Card" key={item.todo}>
             <p>{item.todo}</p>
-            <select onChange={handleStatusChange}>
-              <option>Not Started</option>
-              <option>In Progress</option>
-              <option>Complete</option>
+            <select onChange={(event) => handleStatusChange(event, item)}>
+              <option value={STATUS_NUMBERS.NOT_STARTED}>Not Started</option>
+              <option value={STATUS_NUMBERS.IN_PROGRESS}>In Progress</option>
+              <option value={STATUS_NUMBERS.COMPLETE}>Complete</option>
             </select>
             <button onClick={() => handleRemoveToDo(item.id)}>Delete</button>
             <button onClick={() => handleRemoveToDo(item.id)}>
