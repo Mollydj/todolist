@@ -1,30 +1,31 @@
 import { useEffect, useState } from "react";
 import "./App.css";
+import AddTask from "./Components/AddTask";
+import Task from "./Components/Task";
+import { STATUS_NUMBERS } from "./Util/StatusNumbers";
 
 function App() {
   const [newItem, setNewItem] = useState({});
   const [todo, setToDo] = useState([]);
   const [todos, setToDos] = useState([]);
   const [removedToDo, setRemovedToDo] = useState([]);
-
-  const STATUS_NUMBERS = {
-    NOT_STARTED: 1,
-    IN_PROGRESS: 2,
-    COMPLETE: 3,
-  };
+  const [subTask, setSubTask] = useState("");
+  const [status, setStatus] = useState();
 
   useEffect(() => {
     const storedToDos = [JSON.parse(localStorage.getItem("TODOS"))];
     if (storedToDos[0]?.length > 0) {
       setToDos(storedToDos[0]);
     }
-  }, [todo]);
+    console.log("STORED", storedToDos[0]);
+  }, [todo, status]);
 
   const handleInput = (event) => {
     setNewItem({
       id: Math.random(),
       todo: event.target.value,
       status: STATUS_NUMBERS.NOT_STARTED,
+      subtasks: [],
     });
   };
 
@@ -41,6 +42,29 @@ function App() {
     setToDo(newItem);
   };
 
+  const handleSubTask = (event, id, item) => {
+    setSubTask(event.target.value);
+  };
+
+  const handleSubtaskSubmit = (event, id, item) => {
+    var index = todos.indexOf(item);
+    const copy = item.subtasks;
+    const updatedItem = {
+      ...item.subtasks,
+      subtasks: [subTask],
+    };
+    setSubTask();
+    console.log("HERE", updatedItem.subtasks);
+    console.log("CPY", copy);
+    // if (~index) {
+    //   item.subtasks = updatedItem;
+    //   console.log("HERE", (todos[index].subtasks = updatedItem));
+    // }
+    // setSubTask(event.target.value);
+    // // setToDos(todos);
+    // console.log("TODOS", todos);
+  };
+
   const handleRemoveToDo = (id) => {
     const copy = [...todos];
     const array = copy.filter((item) => item.id !== id);
@@ -49,41 +73,33 @@ function App() {
   };
 
   const handleStatusChange = (event, item) => {
-    console.log("EVENT", event.target.value);
     var index = todos.indexOf(item);
     const updatedItem = {
-      ...newItem,
+      ...item,
       status: JSON.parse(event.target.value),
     };
     if (~index) {
       todos[index] = updatedItem;
     }
+    setToDos(todos);
+    setStatus(event.target.value);
+    localStorage.setItem("TODOS", JSON.stringify(todos));
   };
 
   return (
     <div className="App">
       <h1 className="Header">My Workspace</h1>
-      <div className="Input">
-        <input className="List" onChange={handleInput} />
-        <button className="button" onClick={handleAddToDo}>
-          Submit
-        </button>
-      </div>
+      <AddTask onHandleInput={handleInput} onHandleAddToDo={handleAddToDo} />
 
       {todos?.length > 0 ? (
         todos.map((item) => (
-          <div className="Card" key={item.todo}>
-            <p>{item.todo}</p>
-            <select onChange={(event) => handleStatusChange(event, item)}>
-              <option value={STATUS_NUMBERS.NOT_STARTED}>Not Started</option>
-              <option value={STATUS_NUMBERS.IN_PROGRESS}>In Progress</option>
-              <option value={STATUS_NUMBERS.COMPLETE}>Complete</option>
-            </select>
-            <button onClick={() => handleRemoveToDo(item.id)}>Delete</button>
-            <button onClick={() => handleRemoveToDo(item.id)}>
-              Add Subitem
-            </button>
-          </div>
+          <Task
+            item={item}
+            onHandleStatusChange={handleStatusChange}
+            onHandleRemoveToDo={handleRemoveToDo}
+            onHandleSubTask={handleSubTask}
+            onHandleSubTaskSubmit={handleSubtaskSubmit}
+          />
         ))
       ) : (
         <p>Add Todos!</p>

@@ -1,0 +1,74 @@
+.App {
+    text-align: center;
+    /* background-color: pink; */
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    display: flex;
+    padding-bottom: 50px;
+  }
+  
+  .Input {
+    padding-top: 10px;
+    padding-bottom: 20px;
+  }
+  
+  
+  .Header {
+    background-color: steelblue;
+    width: 100%;
+  }
+  
+  
+  .Card {
+    background-color: #efefef;
+    width: 60%;
+    margin: 10px;
+    flex-direction: column;
+    justify-content: space-around;
+    display: flex;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .Card2 {
+    display: flex;
+  }
+
+  .ToDoTitle {
+    width: 80%;
+    text-align: left;
+  }
+
+  .StatusDropdown {
+    border: 0;
+    color: white;
+    font-weight: bold;
+  }
+
+  .StatusDropdown.notStarted {
+    background-color: #AC5F47;
+  }
+
+  .StatusDropdown.inProgress {
+    background-color: #DB9747;
+  }
+
+  .StatusDropdown.Completed {
+    background-color: #9EBC90;
+  }
+
+  /* .form-control.invalid label {
+    color: saddlebrown;
+  } */
+  
+  
+  /* @keyframes App-logo-spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  } */
+  
